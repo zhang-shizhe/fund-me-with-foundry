@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
 
 contract FundMe {
     using PriceConverter for uint256;
@@ -12,7 +12,7 @@ contract FundMe {
     mapping(address => uint256) public addressToAmountFunded;
     address[] public funders;
 
-    // Could we make this constant?  /* hint: no! We should make it immutable! */
+    // immutable: only canbe setup once, like constant, but can be assign outside the global scope
     address public /* immutable */ i_owner;
     uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
     
@@ -33,8 +33,10 @@ contract FundMe {
     }
     
     modifier onlyOwner {
-        // require(msg.sender == owner);
-        if (msg.sender != i_owner) revert NotOwner();
+        // require(msg.sender == owner, "Sender is not owner"); 
+        //this is not gas efficent because of the string in the require
+        // use customed error instead
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
         _;
     }
     
