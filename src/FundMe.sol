@@ -45,7 +45,12 @@ contract FundMe {
     }
     
     function withdraw() public onlyOwner {
-        for (uint256 funderIndex=0; funderIndex < s_funders.length; funderIndex++){
+        uint256 fundersLength = s_funders.length; // use a memeroy instead of a storage, save gas usage
+        for (
+            uint256 funderIndex=0; 
+            funderIndex < fundersLength; 
+            funderIndex++
+        ) {
             address funder = s_funders[funderIndex];
             s_addressToAmountFunded[funder] = 0;
         }
